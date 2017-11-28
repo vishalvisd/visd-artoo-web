@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>ArtooWeb</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
+          rel="stylesheet">
+    <script src="https://www.gstatic.com/firebasejs/4.6.2/firebase.js"></script>
+</head>
+<body>
+<div id="approot"></div>
+<script type="text/javascript">
+
+    /*Initialize firebase*/
+    var fireBaseconfig = {
+      apiKey: "AIzaSyB4VZLykzkG8Td3WcO_GgSKhgzOaJIESkw",
+      authDomain: "visdartoo.firebaseapp.com",
+      databaseURL: "https://visdartoo.firebaseio.com",
+      projectId: "visdartoo",
+      storageBucket: "visdartoo.appspot.com",
+      messagingSenderId: "665486195622"
+    };
+    firebase.initializeApp(fireBaseconfig);
+    /**/
+  const getConfigFromLocalStorage = function () {
+    let appConfig = {
+      staticServerUrl: "http://localhost:8010",
+      apiServerUrl: "http://localhost:3010"
+    };
+    try {
+      const c = JSON.parse(window.localStorage.getItem("developerConfig"));
+      if (c !== null) {
+        return c;
+      } else {
+        return appConfig;
+      }
+    } catch (ex) {
+      return appConfig;
+    }
+  };
+  const config = getConfigFromLocalStorage();
+  window.STATIC_SERVER_URL = config.staticServerUrl;
+  window.API_SERVER_URL = config.apiServerUrl;
+    /* load 'load.js' everthing which will load correct bundles as per version */
+  let script = document.createElement("script");
+  script.setAttribute("type", "text/javascript");
+  script.setAttribute("src", "./load.js?hash="+Date.now());
+  document.getElementsByTagName("body")[0].appendChild(script);
+</script>
+</body>
+</html>
