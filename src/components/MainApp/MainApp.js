@@ -17,8 +17,13 @@ import {Router} from "react-router-dom";
 import createBrowserHistory from "history/createBrowserHistory";
 import ContentArea from "../ContentArea/ContentArea";
 import LeftNavMenu from "../LeftNavMenu/LeftNavMenu";
+import {dispatcher} from "visd-redux-adapter";
+import Actions from "../../common/Actions.js";
 
 const history = createBrowserHistory();
+history.listen( location => {
+  dispatcher.publish(Actions.ROUTE_CHANGED, location.pathname);
+});
 
 class MainApp extends Component {
   constructor(props, context){

@@ -33,6 +33,7 @@ function processStateFromDb(state, db) {
     return uniqueUsers;
   }, []);
   state.stateSetFromDb = true;
+  setTimeout(()=>dispatcher.publish(Actions.ROUTE_CHANGED, window.location.href));
 }
 function getTicketId(allTickets) {
   let largestNum = 0;
@@ -204,6 +205,19 @@ var InitStore = createStore({
       }).catch((e)=>dispatcher.publish(Actions.SHOW_SNACK_MESSAGE, e.message));
     }).catch((e)=>dispatcher.publish(Actions.SHOW_SNACK_MESSAGE, e.message));
   },
+  ROUTE_CHANGED(state, route){
+    let userManageRoles = JSON.parse(JSON.stringify(state.userManagePages));
+    let userActionRoles = JSON.parse(JSON.stringify(state.userActionPages));
+    let routeAllowed = userManageRoles.merge(userActionRoles).filter((pageid)=>{
+      return route.indexOf(pageid) !== -1;
+    }).length > 0;
+    if (routeAllowed === false){
+      //todo to0 much bad
+      if (route !== "http://localhost:8010/"){
+        window.location.href = "http://localhost:8010/";
+      }
+    }
+  }
 });
 
 export default InitStore;
