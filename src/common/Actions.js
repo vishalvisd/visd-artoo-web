@@ -8,7 +8,11 @@ var Actions = keymirror({
   SETUP_USER: null,
   DB_VALUE_UPDATE: null,
   CREATE_TICKET_FORM_MODIFY: null,
-  CREATE_NEW_TICKET: null
+  CREATE_NEW_TICKET: null,
+  SHOW_EDIT_TICKET_POPUP: null,
+  HIDE_EDIT_TICKET_POPUP: null,
+  EDIT_TICKET_FORM_MODIFY: null,
+  EDIT_TICKET_FORM_SUBMIT: null
 });
 
 export default Actions;

@@ -113,6 +113,27 @@ var InitStore = createStore({
     };
     clearFormData(state.createTicketFormData);
     firebaseDatabase.ref().child(DATA_BASE_ROOT).child("tickets").set(allTickets);
+  },
+  SHOW_EDIT_TICKET_POPUP(state, ticketId){
+    if (ticketId) {
+      state.editingTicketData = {
+        id: ticketId,
+        ...state.tickets[ticketId]
+      };
+      state.showEditTicketsPopup = true;
+    }
+  },
+  EDIT_TICKET_FORM_MODIFY(state, field, value){
+    state.editingTicketData[field] = value;
+  },
+  EDIT_TICKET_FORM_SUBMIT(state){
+    let ticketId = state.editingTicketData.id;
+    delete state.editingTicketData.id;
+    firebaseDatabase.ref().child(DATA_BASE_ROOT).child("tickets").child(ticketId).set(state.editingTicketData);
+  },
+  HIDE_EDIT_TICKET_POPUP(state){
+    state.editingTicketData = {};
+    state.showEditTicketsPopup = false;
   }
 });
 

@@ -13,10 +13,20 @@ import StoreLoaderMixin from "../../common/StoreLoaderMixin";
 import initStore from "../../stores/initStore";
 import {dispatcher} from "visd-redux-adapter";
 import Actions from "../../common/Actions.js";
-import {TextField, Button, Select, Input} from "material-ui";
-import {MenuItem} from "material-ui/Menu";
-import {MAX_PRIORITY, AVAILABLE_STATUS} from "../../common/enum";
+import {Button} from "material-ui";
+import ViewTicketsFieldsRenderer from "./ViewTicketsFieldsRenderer";
+import Dialog, {
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+} from "material-ui/Dialog";
+import Slide from "material-ui/transitions/Slide";
 
+function Transition(props) {
+  let p = Object.assign({}, props, {timeout: 300});
+  return <Slide direction="up" {...p} />;
+}
 
 class ViewTickets extends Component {
   constructor(props, context){
@@ -41,108 +51,38 @@ class ViewTickets extends Component {
                       raised
                       dense
                       className={classes.Loginbutton}
-                      onClick={()=>dispatcher.publish(Actions.CREATE_NEW_TICKET)}>
+                      onClick={()=>dispatcher.publish(Actions.SHOW_EDIT_TICKET_POPUP, key)}>
                       Edit
                     </Button>
                   </div>
                 </div>
               </ExpansionPanelSummary>
               <ExpansionPanelDetails className={classes.expansionPane}>
-                <TextField
-                  value={value.creator}
-                  label="Created By"
-                  disabled={true}
-                  className={classes.textField}
-                  helperText=""
-                  fullWidth={true}
-                  margin="normal">
-                </TextField>
-                <TextField
-                  value={value.creationdt}
-                  label="Creation Date"
-                  disabled={true}
-                  className={classes.textField}
-                  helperText=""
-                  fullWidth={true}
-                  margin="normal">
-                </TextField>
-                <Select
-                  value={value.status}
-                  disabled={true}
-                  fullWidth={true}
-                  onChange={e => dispatcher.publish(Actions.VIEW_TICKET_FORM_MODIFY, "status", e.target.value)}
-                  input={<Input name="assingTo"/>}
-                >
-                  {
-                    Object.keys(AVAILABLE_STATUS).map((v, i1)=>{
-                      return <MenuItem key={i1} value={AVAILABLE_STATUS[v]}>{AVAILABLE_STATUS[v]}</MenuItem>;
-                    })
-                  }
-                </Select>
-                <TextField
-                  value={value.title}
-                  disabled={true}
-                  label="Title"
-                  className={classes.textField}
-                  helperText=""
-                  fullWidth={true}
-                  onChange={e => dispatcher.publish(Actions.VIEW_TICKET_FORM_MODIFY, "title", e.target.value)}
-                  margin="normal">
-                </TextField>
-                <TextField
-                  value={value.description}
-                  disabled={true}
-                  label="Description"
-                  className={classes.textField}
-                  helperText=""
-                  fullWidth={true}
-                  onChange={e => dispatcher.publish(Actions.VIEW_TICKET_FORM_MODIFY, "description", e.target.value)}
-                  margin="normal">
-                </TextField>
-                <Select
-                  value={value.assignTo}
-                  disabled={true}
-                  fullWidth={true}
-                  onChange={e => dispatcher.publish(Actions.VIEW_TICKET_FORM_MODIFY, "assignTo", e.target.value)}
-                  input={<Input name="assingTo"/>}
-                >
-                  {
-                    this.state.allUsers.map((v, i1)=>{
-                      return <MenuItem key={i1} value={v}>{v}</MenuItem>;
-                    })
-                  }
-                </Select>
-                <TextField
-                  id="date"
-                  label="Due Date"
-                  disabled={true}
-                  fullWidth={true}
-                  type="date"
-                  value={value.dueDate}
-                  onChange={e => dispatcher.publish(Actions.VIEW_TICKET_FORM_MODIFY, "dueDate", e.target.value)}
-                  defaultValue={new Date()}
-                  className={classes.textField}
-                  InputLabelProps={{
-                    shrink: true,
-                  }}
-                />
-                <Select
-                  value={value.priority}
-                  disabled={true}
-                  fullWidth={true}
-                  onChange={e => dispatcher.publish(Actions.VIEW_TICKET_FORM_MODIFY, "priority", e.target.value)}
-                  input={<Input name="priority"/>}
-                >
-                  {
-                    [...Array(MAX_PRIORITY).fill("")].map((v, i1)=>{
-                      return <MenuItem key={i} value={i1+1}>{i1+1}</MenuItem>;
-                    })
-                  }
-                </Select>
+                <ViewTicketsFieldsRenderer disabledAll={true} allUsers={this.state.allUsers} data={value}/>
               </ExpansionPanelDetails>
             </ExpansionPanel>;
           })
         }
+        <Dialog
+          open={this.state.showEditTicketsPopup}
+          transition={Transition}
+          keepMounted
+        >
+          <DialogTitle>{`Edit ${this.state.editingTicketData.id}`}</DialogTitle>
+          <DialogContent>
+            <DialogContentText>
+              <ViewTicketsFieldsRenderer disabledAll={false} allUsers={this.state.allUsers} data={this.state.editingTicketData}/>
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={()=>dispatcher.publish(Actions.HIDE_EDIT_TICKET_POPUP)} color="secondary">
+              Back
+            </Button>
+            <Button onClick={()=>dispatcher.publish(Actions.EDIT_TICKET_FORM_SUBMIT)} color="primary">
+              Save
+            </Button>
+          </DialogActions>
+        </Dialog>
       </div>
     );
   }
