@@ -22,6 +22,7 @@ import Dialog, {
   DialogTitle,
 } from "material-ui/Dialog";
 import Slide from "material-ui/transitions/Slide";
+import ErrorBoundry from "../ErrorBoundry/ErrorBoundry";
 
 function Transition(props) {
   let p = Object.assign({}, props, {timeout: 300});
@@ -40,7 +41,7 @@ class ViewTickets extends Component {
         <h1>View Tickets</h1>
         {
           this.state.tickets && Object.entries(this.state.tickets).map(([key, value], i)=>{
-            return <ExpansionPanel key={i}>
+            return <ErrorBoundry key={i}><ExpansionPanel>
               <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
                 <div className={classes.column1}>
                   <Typography className={classes.heading}>{key}</Typography>
@@ -60,7 +61,7 @@ class ViewTickets extends Component {
               <ExpansionPanelDetails className={classes.expansionPane}>
                 <ViewTicketsFieldsRenderer disabledAll={true} allUsers={this.state.allUsers} data={value}/>
               </ExpansionPanelDetails>
-            </ExpansionPanel>;
+            </ExpansionPanel></ErrorBoundry>;
           })
         }
         {

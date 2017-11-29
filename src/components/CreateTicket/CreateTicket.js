@@ -89,9 +89,8 @@ class CreateTicket extends Component {
                     <TextField
                       type={v.type === "date" ? "date" : null}
                       value={v.value}
-                      label={v.label}
                       className={classes.textField}
-                      helperText=""
+                      helperText={v.label}
                       fullWidth={true}
                       onChange={(e, t, value) => dispatcher.publish(Actions.CREATE_TICKET_FORM_MODIFY, k, value)}
                       margin="normal">
