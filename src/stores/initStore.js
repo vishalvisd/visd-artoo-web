@@ -2,12 +2,7 @@ import {createStore, dispatcher} from "visd-redux-adapter";
 import Actions from "../common/Actions.js";
 import {menuConfig} from "../common/leftMenuConfig";
 import moment from "moment";
-import {DB_DATE_FORMAT, DATA_BASE_ROOT, AVAILABLE_STATUS} from "../common/enum";
-const ROLES = {
-  ADMIN: "admin",
-  SUPPORT_ENGINEER: "se",
-  PRODUCT_ENGINEER: "pe"
-};
+import {DB_DATE_FORMAT, DATA_BASE_ROOT, AVAILABLE_STATUS, ROLES} from "../common/enum";
 const DEFAULT_ROLE = ROLES.SUPPORT_ENGINEER;
 console.log("menuconfig", menuConfig);
 const USER_ACTION_PAGES = Object.values(menuConfig).filter(v=>v.area === "actions").map(v=>v.key);
@@ -18,6 +13,7 @@ const ERROR_MESSAGE_TIMEOUT = 4000;
 
 function processStateFromDb(state, db) {
   state.tickets = db.tickets;
+  state.roles = db.roles;
   state.userRoles = Object.entries(db.roles).filter(([, value]) => value.includes(state.userInfo.email)).map((r)=>r[0]);
   state.settings = db.settings;
   state.userActionPages = state.userRoles.reduce((pageSettings, role)=>{
@@ -195,7 +191,16 @@ var InitStore = createStore({
       error: false,
       errorMessage: ""
     };
-  }
+  },
+  ADD_NEW_USER(state, email, password, role){
+    firebaseAuth.createUserWithEmailAndPassword(email, password).then(()=>{
+      let allUserForRole = state.roles[role];
+      allUserForRole.push(email);
+      firebaseDatabase.ref().child(DATA_BASE_ROOT).child("roles").child(role).set(allUserForRole).then(()=>{
+        dispatcher.publish(Actions.SHOW_SNACK_MESSAGE, "User Creation Successful");
+      }).catch((e)=>dispatcher.publish(Actions.SHOW_SNACK_MESSAGE, e.message));
+    }).catch((e)=>dispatcher.publish(Actions.SHOW_SNACK_MESSAGE, e.message));
+  },
 });
 
 export default InitStore;

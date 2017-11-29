@@ -8,3 +8,8 @@ export const AVAILABLE_STATUS = {
   READYFORTESTING: "Ready For Testing",
   DONE: "Done"
 };
+export const ROLES = {
+  ADMIN: "admin",
+  SUPPORT_ENGINEER: "se",
+  PRODUCT_ENGINEER: "pe"
+};

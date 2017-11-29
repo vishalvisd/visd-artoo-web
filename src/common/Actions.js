@@ -14,7 +14,8 @@ var Actions = keymirror({
   EDIT_TICKET_FORM_MODIFY: null,
   EDIT_TICKET_FORM_SUBMIT: null,
   SHOW_SNACK_MESSAGE: null,
-  HIDE_SNACK_MESSAGE: null
+  HIDE_SNACK_MESSAGE: null,
+  ADD_NEW_USER: null
 });
 
 export default Actions;
