@@ -106,7 +106,8 @@ var InitStore = createStore({
       }
     });
     firebaseDatabase.ref().child(DATA_BASE_ROOT).on("value", (cdb)=>{
-      dispatcher.publish(Actions.DB_VALUE_UPDATE, cdb.val());
+      setTimeout(()=>dispatcher.publish(Actions.DB_VALUE_UPDATE, cdb.val()));
+
     });
   },
   DB_VALUE_UPDATE(state, db){
