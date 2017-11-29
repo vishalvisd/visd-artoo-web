@@ -12,7 +12,9 @@ var Actions = keymirror({
   SHOW_EDIT_TICKET_POPUP: null,
   HIDE_EDIT_TICKET_POPUP: null,
   EDIT_TICKET_FORM_MODIFY: null,
-  EDIT_TICKET_FORM_SUBMIT: null
+  EDIT_TICKET_FORM_SUBMIT: null,
+  SHOW_SNACK_MESSAGE: null,
+  HIDE_SNACK_MESSAGE: null
 });
 
 export default Actions;

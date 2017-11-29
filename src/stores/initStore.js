@@ -14,6 +14,7 @@ const USER_ACTION_PAGES = Object.values(menuConfig).filter(v=>v.area === "action
 const USER_MANAGE_PAGES = Object.values(menuConfig).filter(v=>v.area === "manage").map(v=>v.key);
 const firebaseAuth = firebase.auth();
 const firebaseDatabase = firebase.database();
+const ERROR_MESSAGE_TIMEOUT = 4000;
 
 function processStateFromDb(state, db) {
   state.tickets = db.tickets;
@@ -60,6 +61,10 @@ var InitStore = createStore({
       ...state.createTicketFormData,
       status: null
     };
+    state.errorConfig = {
+      error: false,
+      errorMessage: ""
+    };
     state.allUsers = [];
   },
   LOGIN_APP_LOAD(state){
@@ -98,7 +103,7 @@ var InitStore = createStore({
   LOGIN_SUBMIT(state, email, password){
     firebaseAuth.signInWithEmailAndPassword(email, password).then((user)=>{
       dispatcher.publish(Actions.LOGIN_USER_LOGGES_IN, user);
-    }).catch((e)=>console.log(e.message));
+    }).catch((e)=>dispatcher.publish(Actions.SHOW_SNACK_MESSAGE, e.message));
   },
   CREATE_TICKET_FORM_MODIFY(state, field, value){
     state.createTicketFormData[field] = value;
@@ -129,11 +134,30 @@ var InitStore = createStore({
   EDIT_TICKET_FORM_SUBMIT(state){
     let ticketId = state.editingTicketData.id;
     delete state.editingTicketData.id;
-    firebaseDatabase.ref().child(DATA_BASE_ROOT).child("tickets").child(ticketId).set(state.editingTicketData);
+    firebaseDatabase.ref().child(DATA_BASE_ROOT).child("tickets").child(ticketId).set(state.editingTicketData).then(()=>{
+      dispatcher.publish(Actions.SHOW_SNACK_MESSAGE, "Changes Saved");
+      dispatcher.publish(Actions.HIDE_EDIT_TICKET_POPUP);
+    });
   },
   HIDE_EDIT_TICKET_POPUP(state){
     state.editingTicketData = {};
     state.showEditTicketsPopup = false;
+  },
+  SHOW_SNACK_MESSAGE(state, errorMessage = "An error occured", actualError){
+    console.log(actualError);
+    state.errorConfig = {
+      error: true,
+      errorMessage: errorMessage
+    };
+    setTimeout(function () {
+      dispatcher.publish(Actions.HIDE_SNACK_MESSAGE);
+    }, ERROR_MESSAGE_TIMEOUT);
+  },
+  HIDE_SNACK_MESSAGE(state){
+    state.errorConfig = {
+      error: false,
+      errorMessage: ""
+    };
   }
 });
 

@@ -11,6 +11,8 @@ import StoreLoaderMixin from "./common/StoreLoaderMixin";
 import initStore from "./stores/initStore";
 import {dispatcher} from "visd-redux-adapter";
 import Actions from "./common/Actions.js";
+import Snackbar from "material-ui/Snackbar";
+import Slide from "material-ui/transitions/Slide";
 import "./common/polyfills";
 
 fieldValidatorCore.addSupport(
@@ -51,7 +53,13 @@ class App extends Component {
     return (
       <MuiThemeProvider theme={theme}>{
         this.renderComponent()
-      }</MuiThemeProvider>
+      }
+      <Snackbar
+        open={this.state.errorConfig.error === true}
+        transition={(p)=><Slide direction="up" {...p} />}
+        SnackbarContentProps={{"aria-describedby": "message-id"}}
+        message={<span id="message-id">{this.state.errorConfig.errorMessage}</span>}
+      /></MuiThemeProvider>
     );
   }
 }
