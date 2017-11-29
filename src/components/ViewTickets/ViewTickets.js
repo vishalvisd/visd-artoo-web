@@ -63,26 +63,28 @@ class ViewTickets extends Component {
             </ExpansionPanel>;
           })
         }
-        <Dialog
-          open={this.state.showEditTicketsPopup}
-          transition={Transition}
-          keepMounted
-        >
-          <DialogTitle>{`Edit ${this.state.editingTicketData.id}`}</DialogTitle>
-          <DialogContent>
-            <DialogContentText>
-              <ViewTicketsFieldsRenderer disabledAll={false} allUsers={this.state.allUsers} data={this.state.editingTicketData}/>
-            </DialogContentText>
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={()=>dispatcher.publish(Actions.HIDE_EDIT_TICKET_POPUP)} color="secondary">
-              Back
-            </Button>
-            <Button onClick={()=>dispatcher.publish(Actions.EDIT_TICKET_FORM_SUBMIT)} color="primary">
-              Save
-            </Button>
-          </DialogActions>
-        </Dialog>
+        {
+          this.state.showEditTicketsPopup ?
+            <Dialog
+              open={this.state.showEditTicketsPopup}
+              transition={Transition}
+              keepMounted>
+              <DialogTitle>{`Edit ${this.state.editingTicketData.id}`}</DialogTitle>
+              <DialogContent>
+                <DialogContentText>
+                  <ViewTicketsFieldsRenderer disabledAll={false} allUsers={this.state.allUsers} data={this.state.editingTicketData}/>
+                </DialogContentText>
+              </DialogContent>
+              <DialogActions>
+                <Button onClick={()=>dispatcher.publish(Actions.HIDE_EDIT_TICKET_POPUP)} color="secondary">
+                  Back
+                </Button>
+                <Button onClick={()=>dispatcher.publish(Actions.EDIT_TICKET_FORM_SUBMIT)} color="primary">
+                  Save
+                </Button>
+              </DialogActions>
+            </Dialog> : ""
+        }
       </div>
     );
   }
