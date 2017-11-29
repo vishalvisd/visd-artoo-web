@@ -32,7 +32,20 @@ class ViewTickets extends Component {
           this.state.tickets && Object.entries(this.state.tickets).map(([key, value], i)=>{
             return <ExpansionPanel key={i}>
               <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
-                <Typography className={classes.heading}>{key}</Typography>
+                <div className={classes.column1}>
+                  <Typography className={classes.heading}>{key}</Typography>
+                </div>
+                <div className={classes.column2}>
+                  <div className={classes.secondaryHeading}>
+                    <Button
+                      raised
+                      dense
+                      className={classes.Loginbutton}
+                      onClick={()=>dispatcher.publish(Actions.CREATE_NEW_TICKET)}>
+                      Edit
+                    </Button>
+                  </div>
+                </div>
               </ExpansionPanelSummary>
               <ExpansionPanelDetails className={classes.expansionPane}>
                 <TextField
@@ -55,8 +68,9 @@ class ViewTickets extends Component {
                 </TextField>
                 <Select
                   value={value.status}
+                  disabled={true}
                   fullWidth={true}
-                  onChange={e => dispatcher.publish(Actions.VIEW_TICKET_FORM_MODIFY, "assignTo", e.target.value)}
+                  onChange={e => dispatcher.publish(Actions.VIEW_TICKET_FORM_MODIFY, "status", e.target.value)}
                   input={<Input name="assingTo"/>}
                 >
                   {
@@ -67,6 +81,7 @@ class ViewTickets extends Component {
                 </Select>
                 <TextField
                   value={value.title}
+                  disabled={true}
                   label="Title"
                   className={classes.textField}
                   helperText=""
@@ -76,6 +91,7 @@ class ViewTickets extends Component {
                 </TextField>
                 <TextField
                   value={value.description}
+                  disabled={true}
                   label="Description"
                   className={classes.textField}
                   helperText=""
@@ -85,6 +101,7 @@ class ViewTickets extends Component {
                 </TextField>
                 <Select
                   value={value.assignTo}
+                  disabled={true}
                   fullWidth={true}
                   onChange={e => dispatcher.publish(Actions.VIEW_TICKET_FORM_MODIFY, "assignTo", e.target.value)}
                   input={<Input name="assingTo"/>}
@@ -98,6 +115,7 @@ class ViewTickets extends Component {
                 <TextField
                   id="date"
                   label="Due Date"
+                  disabled={true}
                   fullWidth={true}
                   type="date"
                   value={value.dueDate}
@@ -110,6 +128,7 @@ class ViewTickets extends Component {
                 />
                 <Select
                   value={value.priority}
+                  disabled={true}
                   fullWidth={true}
                   onChange={e => dispatcher.publish(Actions.VIEW_TICKET_FORM_MODIFY, "priority", e.target.value)}
                   input={<Input name="priority"/>}

@@ -56,6 +56,10 @@ var InitStore = createStore({
       dueDate: null,
       priority: null
     };
+    state.viewTicketFormData = {
+      ...state.createTicketFormData,
+      status: null
+    };
     state.allUsers = [];
   },
   LOGIN_APP_LOAD(state){
