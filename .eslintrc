@@ -23,7 +23,8 @@
     "flowtype"
   ],
   "globals": {
-    "window": true
+    "window": true,
+    "firebase": true
   },
   "rules": {
     "semi": [

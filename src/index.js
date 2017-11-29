@@ -11,8 +11,8 @@ import StoreLoaderMixin from "./common/StoreLoaderMixin";
 import initStore from "./stores/initStore";
 import {dispatcher} from "visd-redux-adapter";
 import Actions from "./common/Actions.js";
+import "./common/polyfills";
 
-const auth = firebase.auth();
 fieldValidatorCore.addSupport(
   "TextField",
   (event) => event[0].target.value,
@@ -36,7 +36,7 @@ class App extends Component {
   constructor(props, context){
     super(props, context);
     this.store = initStore;
-    dispatcher.publish(Actions.APP_LOAD);
+    dispatcher.publish(Actions.LOGIN_APP_LOAD);
   }
   renderComponent(){
     if (this.state.loggedIn === true){
@@ -52,7 +52,7 @@ class App extends Component {
       <MuiThemeProvider theme={theme}>{
         this.renderComponent()
       }</MuiThemeProvider>
-    )
+    );
   }
 }
 
