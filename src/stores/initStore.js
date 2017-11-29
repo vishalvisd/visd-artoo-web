@@ -32,6 +32,7 @@ function processStateFromDb(state, db) {
     uniqueUsers.merge(v);
     return uniqueUsers;
   }, []);
+  state.stateSetFromDb = true;
 }
 function getTicketId(allTickets) {
   let largestNum = 0;
@@ -91,9 +92,11 @@ var InitStore = createStore({
       errorMessage: ""
     };
     state.allUsers = [];
+    state.stateSetFromDb = false;
   },
   LOGIN_APP_LOAD(state){
     console.log(state);
+    state.stateSetFromDb = false;
     firebaseAuth.onAuthStateChanged(user => {
       if (user){
         dispatcher.publish(Actions.LOGIN_USER_LOGGES_IN, user);
