@@ -5,6 +5,8 @@ import {withStyles} from "material-ui/styles";
 import {TextField, Paper, Button} from "material-ui";
 import {dispatcher} from "visd-redux-adapter";
 import Actions from "../../common/Actions.js";
+import {Validation, fieldValidatorCore} from "react-validation-framework";
+import validator from "validator";
 
 class Login extends Component {
   constructor(props, context){
@@ -18,9 +20,8 @@ class Login extends Component {
     this.handleLoginPasswordTextField = this.handleLoginPasswordTextField.bind(this);
   }
 
-  handleLoginEmailTextField(e){
-    let val = e.target.value;
-    this.setState((state)=>({...state, loginEmail: val}));
+  handleLoginEmailTextField(e, index, value){
+    this.setState((state)=>({...state, loginEmail: value}));
   }
 
   handleLoginPasswordTextField(e){
@@ -29,22 +30,36 @@ class Login extends Component {
   }
 
   handleLoginButtonClick(){
-    dispatcher.publish(Actions.LOGIN_SUBMIT, this.state.loginEmail, this.state.loginPassword);
+    if (fieldValidatorCore.checkGroup("login").isValid === true){
+      dispatcher.publish(Actions.LOGIN_SUBMIT, this.state.loginEmail, this.state.loginPassword);
+    }
   }
 
   render(){
     const {classes} = this.props;
     return <Paper className={classes.paperRoot} elevation={10}>
       <div className={classes.positionRelative}>
-        <TextField
-          value={this.state.loginEmail}
-          label="Email Address"
-          className={classes.textField}
-          helperText=""
-          fullWidth={true}
-          onChange={this.handleLoginEmailTextField}
-          margin="normal">
-        </TextField>
+        <Validation
+          group={"login"}
+          onChangeCallback="onChange"
+          validators={[
+            {
+              validator: (val) => {
+                return validator.isEmail(val);
+              },
+              errorPropValue: true,
+              errorMessage: "Please enter a valid email"
+            }]}>
+          <TextField
+            value={this.state.loginEmail}
+            label="Email Address"
+            className={classes.textField}
+            helperText=""
+            fullWidth={true}
+            onChange={this.handleLoginEmailTextField}
+            margin="normal">
+          </TextField>
+        </Validation>
         <TextField
           value={this.state.loginPassword}
           label="Password"

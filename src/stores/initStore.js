@@ -37,10 +37,18 @@ function processStateFromDb(state, db) {
     return uniqueUsers;
   }, []);
 }
-
+function getTicketId(allTickets) {
+  let largestNum = 0;
+  Object.keys(allTickets).forEach((k)=>{
+    if (!isNaN(Number(k.substring(2)))){
+      largestNum = Number(k.substring(2)) > largestNum ? Number(k.substring(2)) : largestNum;
+    }
+  });
+  return `AR${largestNum+1}`;
+}
 function clearFormData(obj) {
   Object.keys(obj).forEach((k)=>{
-    obj[k] = "";
+    obj[k].value = "";
   });
 }
 var InitStore = createStore({
@@ -51,15 +59,36 @@ var InitStore = createStore({
     state.userActionPages = [];
     state.userManagePages = [];
     state.createTicketFormData = {
-      title: null,
-      description: null,
-      assignTo: null,
-      dueDate: null,
-      priority: null
-    };
-    state.viewTicketFormData = {
-      ...state.createTicketFormData,
-      status: null
+      title: {
+        label: "Title",
+        type: "text",
+        value: null,
+        isRequired: true
+      },
+      description: {
+        label: "Description",
+        type: "text",
+        value: null,
+        isRequired: true
+      },
+      assignTo: {
+        label: "Assign To",
+        type: "select",
+        value: null,
+        isRequired: true
+      },
+      dueDate: {
+        label: "Due Date",
+        type: "date",
+        value: null,
+        isRequired: false
+      },
+      priority: {
+        label: "Priority",
+        type: "select",
+        value: null,
+        isRequired: true
+      }
     };
     state.errorConfig = {
       error: false,
@@ -106,18 +135,26 @@ var InitStore = createStore({
     }).catch((e)=>dispatcher.publish(Actions.SHOW_SNACK_MESSAGE, e.message));
   },
   CREATE_TICKET_FORM_MODIFY(state, field, value){
-    state.createTicketFormData[field] = value;
+    state.createTicketFormData[field].value = value;
   },
   CREATE_NEW_TICKET(state){
     let allTickets = state.tickets;
-    allTickets[`AR${Object.keys(allTickets).length}`] = {
-      ...state.createTicketFormData,
+    allTickets[getTicketId(allTickets)] = {
+      title: state.createTicketFormData.title.value,
+      description: state.createTicketFormData.description.value,
+      assignTo: state.createTicketFormData.assignTo.value,
+      dueDate: state.createTicketFormData.dueDate.value,
+      priority: state.createTicketFormData.priority.value,
       status: AVAILABLE_STATUS.OPEN,
       creator: state.userInfo.email,
       creationdt: moment().format(DB_DATE_FORMAT),
     };
-    clearFormData(state.createTicketFormData);
-    firebaseDatabase.ref().child(DATA_BASE_ROOT).child("tickets").set(allTickets);
+    firebaseDatabase.ref().child(DATA_BASE_ROOT).child("tickets").set(allTickets).then(()=>{
+      clearFormData(state.createTicketFormData);
+      dispatcher.publish(Actions.SHOW_SNACK_MESSAGE, "New Ticket Created!");
+    }).catch((e)=>{
+      dispatcher.publish(Actions.SHOW_SNACK_MESSAGE, e.message);
+    });
   },
   SHOW_EDIT_TICKET_POPUP(state, ticketId){
     if (ticketId) {
